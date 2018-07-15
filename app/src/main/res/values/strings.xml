@@ -1,0 +1,11 @@
+<resources>
+
+
+    <string name="tab_nav_item0">首页</string>
+    <string name="tab_nav_item1">分类</string>
+    <string name="tab_nav_item2">视频购物</string>
+    <string name="tab_nav_item3">找券</string>
+    <string name="tab_nav_item4">我的</string>
+
+
+</resources>

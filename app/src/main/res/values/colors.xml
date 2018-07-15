@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="c_main">#FF6A6A</color>
+    <color name="c_main_text">#000000</color>
+    <color name="c_line">#EEEEEE</color>
+
+    <color name="c_757575">#757575</color>
+    <color name="c_999999">#999999</color>
+
+
+</resources>

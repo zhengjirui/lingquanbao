@@ -1,0 +1,73 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk { abiFilters "armeabi", "armeabi-v7a", "x86", "mips" }
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "BASE_URL", "\"http://lqb.lianzun.net/\""//可用于配置正式环境和测试环境的服务器
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField "String", "BASE_URL", "\"http://lqb.lianzun.net/\""//可用于配置正式环境和测试环境的服务器
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+greendao {
+    schemaVersion 5//数据库schema版本号，通过*OpenHelpers迁移数据，schema改变值增加。默认为1
+    daoPackage 'com.common.app.database'//生成DAOs、DaoMaster、DaoSession的包名。默认为entities所在包名。
+    targetGenDir 'src/main/java'//生成DAOs、DaoMaster、DaoSession的目录。默认为build/generated/source/greendao
+}
+
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    api rootProject.ext.dependencies.appcompat_v7
+    api rootProject.ext.dependencies.design
+    api rootProject.ext.dependencies.retrofit
+    api rootProject.ext.dependencies.retrofit_converter_gson
+    api rootProject.ext.dependencies.retrofit_adapter_rxjava2
+    api rootProject.ext.dependencies.gson
+    api rootProject.ext.dependencies.rxandroid
+    api rootProject.ext.dependencies.rxjava
+    api rootProject.ext.dependencies.glide
+    api rootProject.ext.dependencies.constraint_layout
+    api rootProject.ext.dependencies.eventbus
+    api rootProject.ext.dependencies.okhttp3_logging
+    api rootProject.ext.dependencies.SmartRefreshLayout
+    api rootProject.ext.dependencies.banner
+    api rootProject.ext.dependencies.butterknife
+    api rootProject.ext.dependencies.greendao
+
+    //https://www.cnblogs.com/zsychanpin/p/7084597.html     通用适配1
+    //https://github.com/CymChad/BaseRecyclerViewAdapterHelper     通用适配2
+    api rootProject.ext.dependencies.libadapter
+    api rootProject.ext.dependencies.RViewAdapterHelper
+    implementation files('libs/tbs_sdk_thirdapp_v3.6.0.1249_43610_sharewithdownload_withoutGame_obfs_20180608_114954.jar')
+}

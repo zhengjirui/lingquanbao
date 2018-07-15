@@ -1,0 +1,151 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "plagiarism", "mould"
+
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            if (output.outputFile != null && output.outputFile.name.endsWith('.apk')
+                    && 'release'.equals(variant.buildType.name)) {
+                //as3.0之后，这里的一段需要修改成这样
+                output.outputFileName = "${variant.flavorName}_v${variant.versionName}_${buildTime()}.apk"
+            }
+        }
+    }
+
+    //签名
+    signingConfigs {
+        lingquanbao {
+            //签名地址
+            storeFile file("\\jks\\lingquanbao.jks")
+            //签名的密码
+            storePassword "123456"
+            //别名
+            keyAlias "lingquanbao"
+            //别名的密码
+            keyPassword "123456"
+        }
+    }
+
+    buildTypes {
+
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            signingConfig signingConfigs.lingquanbao
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            zipAlignEnabled false
+            signingConfig signingConfigs.lingquanbao
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
+
+        //模板1
+        Mxiangmu1 {
+            dimension 'mould'
+        }
+        //项目1
+        lingquanbao {
+            applicationId "com.lechuang.lingquanbao"
+            versionCode 100
+            versionName "1.0.0"
+            def appName = "领券宝"
+            //服务器地址
+            def uri = "http://lqb.lianzun.net/"//注意，更换服务地址需要在commont中更换
+            //淘宝pid(百川用户pid   非常重要  注意替换)
+            def ali_PID = "mm_129981298_0_0"
+            //appkey  (百川的appkey 用于客服功能  注意替换)
+            def ali_APP_KEY = "24763367"
+            def JPUSH_APPKEY = "4f936aedd7d7703701241544"
+            def UMENG_APPKEY = "5a6097e78f4a9d6f6b000117"
+            dimension 'plagiarism'
+            putParameter(it, applicationId, appName, uri, ali_PID, ali_APP_KEY, JPUSH_APPKEY, UMENG_APPKEY)
+        }
+    }
+
+    configurations.all {
+        //不知道为啥，不能删
+        //删了就报错，说test引用的包和app依赖的包版本不同
+        resolutionStrategy.force rootProject.ext.dependencies.resolutionStrategy
+    }
+
+    sourceSets {
+        //https://www.jianshu.com/p/c2c8461999be
+        //也可以配置java目录
+        main {
+            res.srcDirs = [
+//                    'src/main/res/layouts',
+'src/main/res'
+            ]
+        }
+    }
+}
+
+static def putParameter(
+        def it, def applicationId, def appName, def uri, def ali_PID,
+        def ali_APP_KEY, def JPUSH_APPKEY, def UMENG_APPKEY) {
+    it.resValue "string", "app_name_res", appName
+    it.resValue "string", "app_agreement", "《" + appName + "用户协议》"
+    it.buildConfigField 'String', 'app_name', "\"${appName}\""
+    it.buildConfigField 'String', 'QUrl_url', "\"${uri}\""
+    it.buildConfigField 'String', 'ali_PID', "\"${ali_PID}\""
+    it.buildConfigField 'String', 'ali_APP_KEY', "\"${ali_APP_KEY}\""
+    it.manifestPlaceholders = [
+            JPUSH_PKGNAME: applicationId,
+            JPUSH_CHANNEL: "developer-default",
+            UMENG_CHANNEL: "Channel ID",
+            JPUSH_APPKEY : JPUSH_APPKEY,
+            UMENG_APPKEY : UMENG_APPKEY
+    ]
+}
+
+static def buildTime() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
+
+greendao {
+    schemaVersion 4//数据库schema版本号，通过*OpenHelpers迁移数据，schema改变值增加。默认为1
+    daoPackage 'com.lechuang.app.database.greendao'//生成DAOs、DaoMaster、DaoSession的包名。默认为entities所在包名。
+    targetGenDir 'src/main/java'//生成DAOs、DaoMaster、DaoSession的目录。默认为build/generated/source/greendao
+}
+
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    api rootProject.ext.dependencies.appcompat_v7
+    api rootProject.ext.dependencies.constraint_layout
+//    api rootProject.ext.dependencies.greendao//带三方的数据暂时不使用
+
+    implementation project(':common_module')
+
+}

@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+
+        <!--设置背景是白色-->
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <!--设置启动图的window背景是启动图，避免白板-->
+    <style name="StartTheme" parent="AppTheme">
+        <item name="android:windowBackground">@mipmap/splash</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!--淘宝天猫的标题SpannelTextView-->
+    <declare-styleable name="SpannelTextView">
+        <attr name="shopType" format="integer"/>
+        <attr name="drawText" format="string|reference"/>
+    </declare-styleable>
+
+</resources>
