@@ -9,7 +9,7 @@ import android.view.View;
  * Created by cmd on 2018/7/14.
  */
 
-public class CusViewPager extends ViewPager {
+public class CusViewPager extends NoPreloadViewPager {
 
     private int mMinHeight = 800;//设置viewpager的最小高度
     public CusViewPager(Context context) {

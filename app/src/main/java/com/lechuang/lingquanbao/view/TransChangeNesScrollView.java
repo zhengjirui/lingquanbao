@@ -2,24 +2,27 @@ package com.lechuang.lingquanbao.view;
 
 import android.content.Context;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.Scroller;
 import android.widget.TableLayout;
 
 /**
  * Created by cmd on 2018/5/6.
  */
 
-public class TransChangeNesScrollView extends NestedScrollView{
+public class TransChangeNesScrollView extends NestedScrollView {
 
     private View mTransChangeView;
     private float mHeightPixels;
 
     public TransChangeNesScrollView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public TransChangeNesScrollView(Context context, AttributeSet attrs) {
@@ -29,7 +32,12 @@ public class TransChangeNesScrollView extends NestedScrollView{
     public TransChangeNesScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mHeightPixels = getContext().getResources().getDisplayMetrics().heightPixels;
+    }
 
+
+    @Override
+    public void fling(int velocityY) {
+        super.fling(velocityY / 2);
     }
 
     @Override
@@ -38,18 +46,18 @@ public class TransChangeNesScrollView extends NestedScrollView{
         if (mTransChangeView != null) {
             // alpha = 滑出去的高度/(screenHeight/3);
 
-            if (this.mLineView != null && mLineView.getTop() - mTopTab.getHeight() <= getScrollY()){
+            if (this.mLineView != null && mLineView.getTop() - mTopTab.getHeight() <= getScrollY()) {
                 mTopTab.setVisibility(VISIBLE);
-            }else {
+            } else {
                 mTopTab.setVisibility(INVISIBLE);
             }
 
             float scrollY = getScrollY();//获取划出去的高度
             float sulv = mHeightPixels / 3;
-            if (scrollY <= 0 ){
+            if (scrollY <= 0) {
                 mTransChangeView.setAlpha(0);
                 mTransChangeView.setVisibility(GONE);
-            }else {
+            } else {
                 mTransChangeView.setAlpha(scrollY / sulv);
                 mTransChangeView.setVisibility(VISIBLE);
             }
@@ -67,18 +75,21 @@ public class TransChangeNesScrollView extends NestedScrollView{
 
     /**
      * 设置头部的tablayout显示隐藏
+     *
      * @param lineView  标记线
      * @param topTab
      */
     private View mLineView;
     private TabLayout mTopTab;
-    public void setTopTabLayout(View lineView, TabLayout topTab){
+
+    public void setTopTabLayout(View lineView, TabLayout topTab) {
         this.mLineView = lineView;
         this.mTopTab = topTab;
     }
 
     private boolean isNeedScroll = true;
     private float xDistance, yDistance, xLast, yLast;
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
@@ -111,7 +122,8 @@ public class TransChangeNesScrollView extends NestedScrollView{
     }
 
     private View view;
-    public void setNeedScrollView(View view){
+
+    public void setNeedScrollView(View view) {
         this.view = view;
     }
 

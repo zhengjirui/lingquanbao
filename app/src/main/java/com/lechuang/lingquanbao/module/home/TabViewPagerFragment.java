@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.app.base.ComponentViewHolder;
 import com.common.app.base.LazyBaseFragment;
+import com.common.app.utils.ShowToast;
 import com.common.app.utils.StringUtils;
 import com.lechuang.lingquanbao.MyApplication;
 import com.lechuang.lingquanbao.R;
@@ -89,6 +90,7 @@ public class TabViewPagerFragment extends LazyBaseFragment {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
+                    ShowToast.getInstance().showShortToast(position + "");
                 }
             });
         }

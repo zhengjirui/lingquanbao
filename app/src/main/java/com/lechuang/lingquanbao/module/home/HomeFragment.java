@@ -40,6 +40,7 @@ import com.lechuang.lingquanbao.http.CommonApi;
 import com.lechuang.lingquanbao.http.HomeApi;
 import com.lechuang.lingquanbao.http.ResultData;
 import com.lechuang.lingquanbao.view.CusViewPager;
+import com.lechuang.lingquanbao.view.NoPreloadViewPager;
 import com.lechuang.lingquanbao.view.TransChangeNesScrollView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -575,13 +576,15 @@ public class HomeFragment extends BaseFragment implements OnRefreshLoadMoreListe
             }
             mTabHomeBottom.removeAllTabs();
             mTabHomeTop.removeAllTabs();
-            mVpHome.setOffscreenPageLimit(1);
-            mTabHomeBottom.setupWithViewPager(mVpHome);//将TabLayout和ViewPager关联起来。
-            mTabHomeTop.setupWithViewPager(mVpHome);//将TabLayout和ViewPager关联起来。
+            mVpHome.setOffscreenPageLimit(0);
+            //mTabHomeBottom.setupWithViewPager(mVpHome);//将TabLayout和ViewPager关联起来。
+            //mTabHomeTop.setupWithViewPager(mVpHome);//将TabLayout和ViewPager关联起来。
             mTabHomeBottom.setFocusable(false);
             mTabHomeTop.setFocusable(false);
             for (int i = 0; i < mTopTabs.size(); i++) {
                 mTabFragment.add(TabViewPagerFragment.newInstence());
+                mTabHomeBottom.addTab(mTabHomeBottom.newTab().setText(mTopTabs.get(i).rootName));
+                mTabHomeTop.addTab(mTabHomeTop.newTab().setText(mTopTabs.get(i).rootName));
             }
             mVpHome.setAdapter(new TabViewPagerAdapter(MyApplication.getApplication(), getChildFragmentManager(), mTopTabs, mTabFragment));
 
@@ -589,6 +592,7 @@ public class HomeFragment extends BaseFragment implements OnRefreshLoadMoreListe
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
                     mCurrentSelectTab = tab.getPosition();
+                    mVpHome.setCurrentItem(mCurrentSelectTab);
                 }
 
                 @Override
@@ -604,7 +608,7 @@ public class HomeFragment extends BaseFragment implements OnRefreshLoadMoreListe
 
             mTabHomeBottom.addOnTabSelectedListener(onTabSelectedListener);
             mTabHomeTop.addOnTabSelectedListener(onTabSelectedListener);
-            mVpHome.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            mVpHome.setOnPageChangeListener(new NoPreloadViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -612,10 +616,14 @@ public class HomeFragment extends BaseFragment implements OnRefreshLoadMoreListe
 
                 @Override
                 public void onPageSelected(int position) {
+
                     mTabToTopY = mLineBottomTab.getTop() - mHomeHeader.getHeight();
                     Log.e("-------",mTabToTopY +"*******" + mLineBottomTab.getTop() + "#####" +mHomeHeader.getHeight());
-                    mHomeNesv.scrollTo(0,mTabToTopY);
+                    mHomeNesv.smoothScrollTo(0,mTabToTopY);
                     mCurrentSelectTab = position;
+                    mTabHomeBottom.setScrollPosition(mCurrentSelectTab,0,true);
+                    mTabHomeTop.setScrollPosition(mCurrentSelectTab,0,true);
+
                 }
 
                 @Override
